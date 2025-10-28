@@ -16,8 +16,6 @@ import os
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-STATIC_URL = '/static/'
-
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 
@@ -25,7 +23,7 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-4tk0i#wh2v&_2$o#9dnktembk)()wsx*-h#-&8xc&a5x#f@!uf'
+SECRET_KEY = 'django-insecure-!i3gaw75xq+b0$2m1ml28+yb)r6xk)&f2kp#s)6*7%t+)-ab+e'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -36,12 +34,14 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'pgvector.django',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'data_real_estate',
     'chatbot',
 ]
 
@@ -80,8 +80,12 @@ WSGI_APPLICATION = 'AI_Chatbot.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'chatbot_db',
+        'USER': 'roxane',
+        'PASSWORD': 'MyPass0609',
+        'HOST': 'localhost',
+        'PORT': '5432',
     }
 }
 
@@ -126,6 +130,8 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+OPENAI_KEY = "OCNd7jVoK2Bn5Y2aMC95fPGSBZlp_ZjaN1UHCD1tVJy6SCtFhqFYUu_bMlWSSyxlfSbvaMW787T3BlbkFJkN8__CIyiQq9KlR9QGWgrYbZWPUtlFfGKN1zB95NnTRuwaFvGUgUAmuml"
 
 GENERATIVE_AI_KEY = os.environ.get('GENERATIVE_AI_KEY')
 

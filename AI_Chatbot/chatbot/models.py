@@ -1,4 +1,5 @@
 from django.db import models
+from pgvector.django import VectorField
 
 class ChatMessage(models.Model):
     user_message = models.TextField()

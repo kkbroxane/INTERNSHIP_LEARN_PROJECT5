@@ -51,9 +51,10 @@
   </div>
 
   <!-- Typing area -->
-  <form action="#" class="bg-light fixed-bottom shadow-lg">
+  <form action="{% url 'send_message' %}" method="post" class="bg-light fixed-bottom shadow-lg">
+    {% csrf_token %}
     <div class="input-group">
-      <input type="text" placeholder="Type a message" aria-describedby="button-addon2" class="form-control bg-i rounded-0 border-0 py-4 bg-s">
+      <input name="user_message" type="text" placeholder="Type a message" aria-describedby="button-addon2" class="form-control bg-i rounded-0 border-0 py-4 bg-s">
       <div class="input-group-append">
         <button id="button-addon2" type="submit" class="btn btn-link bg-i"> <i class="fa fa-paper-plane"></i></button>
       </div>

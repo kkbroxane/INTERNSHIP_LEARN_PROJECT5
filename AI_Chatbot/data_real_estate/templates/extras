@@ -1,0 +1,33 @@
+<form id="imageUploadForm" method="post" enctype="multipart/form-data">
+  <div class="form-group">
+    <label for="imageUpload">Upload Images</label>
+    <input type="file" class="form-control-file" id="imageUpload" name="images[]" multiple accept="image/*">
+    <small class="form-text text-muted">Select multiple image files to upload.</small>
+  </div>
+  <div id="imagePreview" class="mt-3">
+    <!-- Image previews will be displayed here -->
+  </div>
+  <button type="submit" class="btn btn-primary mt-3">Upload</button>
+</form>
+
+
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4" style="max-width: 600px;">
+  <h2 class="mb-4 text-center">Create an article</h2>
+  <form method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.title }}
+    {{ form.content }}
+    Choose a cover image :
+    {{ form.image }}
+    <p class="mt-2">
+      Choose an existing category :</p>
+    {{ form.category }}
+    <p class="mt-2">Or create a new category :</p>
+    {{ form.new_category }}
+    <button type="submit" class="btn btn-success mt-3">Submit</button>
+  </form>
+</div>
+{% endblock %}
