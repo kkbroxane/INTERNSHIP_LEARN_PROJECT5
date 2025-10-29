@@ -104,3 +104,28 @@ Once installed:
 ollama --version
 ollama pull llama3
 ollama run llama3
+
+### ============================
+
+```python
+def detect_property_type(user_query):
+    q = user_query.lower()
+    if "maison" in q:
+        return "maison"
+    elif "appartement" in q:
+        return "appartement"
+    elif "terrain" in q:
+        return "terrain"
+    return None
+
+
+def search_properties(user_query, top_k=5):
+    query_embedding = embed_content(user_query)
+    detected_type = detect_property_type(user_query)
+
+    qs = Property.objects.exclude(embedding=None)
+    if detected_type:
+        qs = qs.filter(type__iexact=detected_type)
+
+    return qs.order_by(CosineDistance("embedding", query_embedding))[:top_k]
+```

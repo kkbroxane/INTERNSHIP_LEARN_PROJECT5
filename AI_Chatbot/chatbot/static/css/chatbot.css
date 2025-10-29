@@ -4,7 +4,7 @@ body {
 
 .bg-p {
     background-color: #062897;
-    max-width: 800px;
+    /* max-width: 800px; */
 }
 
 .fa {
@@ -13,7 +13,7 @@ body {
 
 .bg-s {
     background-color: #e2e2e2;
-    max-width: 800px;
+    /* max-width: 800px; */
 }
 
 .bg-i {

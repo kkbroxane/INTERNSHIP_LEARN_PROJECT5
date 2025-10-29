@@ -8,29 +8,25 @@ def embed_content(text):
         json={"model": "llama3", "prompt": text}
     )
     embedding = response.json()["embedding"]
-    
-    print("\n\n*********************\nEmbedding length:", len(embedding), "\n\n")
-
     return embedding
 
-# def generate_content(prompt):
-#     url = LLAMA_GENERATION_URL
-#     data = {'model': 'llama3', 'prompt': prompt}
-#     response = requests.post(url, json=data, stream=True)
+"""
+def generate_content(prompt):
+    url = LLAMA_GENERATION_URL
+    data = {'model': 'llama3', 'prompt': prompt}
+    response = requests.post(url, json=data, stream=True)
 
-#     full_text = ""
-#     for line in response.iter_lines(decode_unicode=True):
-#         if line:
-#             try:
-#                 json_data = line.decode("UTF-8")
-#                 part = json_data.get("response", "")
-#                 full_text += part
-#             except json.JSONDecodeError:
-#                 continue
-
-#     return full_text
-
-
+    full_text = ""
+    for line in response.iter_lines(decode_unicode=True):
+        if line:
+            try:
+                json_data = line.decode("UTF-8")
+                part = json_data.get("response", "")
+                full_text += part
+            except json.JSONDecodeError:
+                continue
+    return full_text
+"""
 
 def generate_content(prompt):
     url = LLAMA_GENERATION_URL
@@ -40,12 +36,9 @@ def generate_content(prompt):
     full_text = ""
     for line in response.iter_lines():
         if not line.strip():
-            continue  # skip empty lines
+            continue
 
-        # line is bytes, so we decode it
         line = line.decode("utf-8")
-
-        # remove streaming prefix if exists
         if line.startswith("data: "):
             line = line[len("data: "):]
 

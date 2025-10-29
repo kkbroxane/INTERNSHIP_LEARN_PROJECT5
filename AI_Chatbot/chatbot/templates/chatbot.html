@@ -33,7 +33,7 @@
     <div class="media my-3 w-75 ml-auto">
       <div class="media-body">
           <div class="bg-p rounded py-3 px-3 mb-0">
-              <p class="text-small mb-0 text-receive text-white">{{ m.user_message }}</p>
+              <p class="text-small mb-0 text-receive text-white">{{ m.user_message|linebreaks }}</p>
           </div>
           <p class="small mb-0 text-muted">Vous</p>
         </div>
@@ -43,7 +43,7 @@
     <div class="media my-3 w-75">
       <div class="media-body">
         <div class="bg-s rounded py-3 px-3">
-          <p class="text-small mb-0 text-receive">{{ m.bot_response }}</p>
+          <p class="text-small mb-0 text-receive">{{ m.bot_response|linebreaks }}</p>
         </div>
           <p class="small mb-0 text-muted">Bot</p>
       </div>
