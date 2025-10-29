@@ -131,9 +131,11 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-OPENAI_KEY = "OCNd7jVoK2Bn5Y2aMC95fPGSBZlp_ZjaN1UHCD1tVJy6SCtFhqFYUu_bMlWSSyxlfSbvaMW787T3BlbkFJkN8__CIyiQq9KlR9QGWgrYbZWPUtlFfGKN1zB95NnTRuwaFvGUgUAmuml"
+LLAMA_GENERATION_URL = "http://localhost:11434/api/generate"
 
-GENERATIVE_AI_KEY = os.environ.get('GENERATIVE_AI_KEY')
+LLAMA_EMBEDDING_URL = "http://localhost:11434/api/embeddings"
 
-if not GENERATIVE_AI_KEY:
-    raise ValueError('GENERATIVE_AI_KEY environment variable not set')
+# GENERATIVE_AI_KEY = os.environ.get('GENERATIVE_AI_KEY')
+
+# if not GENERATIVE_AI_KEY:
+#     raise ValueError('GENERATIVE_AI_KEY environment variable not set')

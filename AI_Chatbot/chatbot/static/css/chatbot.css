@@ -1,15 +1,19 @@
-body { padding-top: 90px; }
+body {
+    padding-top: 90px;
+}
 
 .bg-p {
-    background-color: #FF745C;
+    background-color: #062897;
+    max-width: 800px;
 }
 
 .fa {
-    color: #FF745C;
+    color: #062897;
 }
 
 .bg-s {
     background-color: #e2e2e2;
+    max-width: 800px;
 }
 
 .bg-i {
@@ -29,23 +33,24 @@ body { padding-top: 90px; }
 }
 
 .btn-outline-primary {
-  color: #676463;
-  border-color: #676463;
+    color: #676463;
+    border-color: #676463;
 }
+
 .messages-box,
 .chat-box {
-  overflow-y: scroll;
-  margin: 10px 16px;
-  height: 100%;
-  padding-bottom: 40px !important;
-  overflow: auto;
+    overflow-y: scroll;
+    margin: 10px 16px;
+    height: 100%;
+    padding-bottom: 40px !important;
+    overflow: auto;
 }
 
 .rounded-lg {
-  border-radius: 0.5rem;
+    border-radius: 0.5rem;
 }
 
 input::placeholder {
-  font-size: 1rem;
-  color: #999;
+    font-size: 1rem;
+    color: #999;
 }

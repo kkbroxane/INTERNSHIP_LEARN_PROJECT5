@@ -1,8 +1,7 @@
 from django.db import models
 from django.core.validators import MinValueValidator
 from pgvector.django import VectorField
-import numpy
-from chatbot.client import client
+from chatbot.views_rag import embed_content
 
 TRANSACTION_TYPES = [
     ('location', 'location'),
@@ -30,12 +29,11 @@ class Property(models.Model):
         validators=[MinValueValidator(1)],
         help_text="Le prix d'un bien doit être strictement supérieur à 0."
     )
-    embedding = VectorField(dimensions=1536, null=True, blank=True)
+    embedding = VectorField(dimensions=4096, null=True, blank=True)
 
     def get_child_instance(self):
         for child in ('logement', 'professionel', 'terrain'):
             if hasattr(self, child):
-                print(f"IS OF {child.upper()}\n\n")
                 return getattr(self, child)
         return self
 
@@ -43,11 +41,7 @@ class Property(models.Model):
         property_instance = self.get_child_instance()
         type_info = property_instance.type_info()
 
-        response = client.embeddings.create(
-            model="text-embedding-3-small",
-            input=type_info
-        )
-        embedding_vector = numpy.array(response.data[0].embedding)
+        embedding_vector = embed_content(type_info)
         self.embedding = embedding_vector
         self.save()
 
