@@ -23,7 +23,7 @@ urlpatterns = [
     # path('admin/', admin.site.urls),
     # path('chatbot/', include('chatbot.urls'))
     path('send', send_message, name='send_message'),
-    # path('', simple_view, name='simple_view'),
     path('', list_messages, name='list_messages'),
+    # path('', simple_view, name='simple_view'),
 
 ]

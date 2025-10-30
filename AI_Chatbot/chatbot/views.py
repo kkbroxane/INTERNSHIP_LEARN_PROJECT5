@@ -84,8 +84,7 @@ def send_message(request):
 
 def list_messages(request):
     messages = ChatMessage.objects.all()
-    return render(request, 'chatbot.html', { 'messages': messages })
-
+    return render(request, 'chat.html', { 'messages': messages })
 
     # print("\n\n*******************\n")
     # print(results)
