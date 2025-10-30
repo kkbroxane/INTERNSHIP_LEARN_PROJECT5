@@ -10,20 +10,38 @@ PROPERTY_KEYWORDS = [
     "appartement",
     "maison",
     "villa",
-    "terrain",
     "bureau",
     "boutique",
-    "meublé",
-    "chambre",
-    "douche",
-    "FCFA",
-    "prix",
+    "terrain",
+    # "meublé",
+    # "chambre",
+    # "douche",
+    # "FCFA",
+    # "prix",
 ]
 
-def search_properties(user_query, top_k=5):
+# OTHER_KEYWORDS = [
+#     "logement",
+#     "meublé",
+#     "chambre",
+#     "douche",
+#     "FCFA",
+#     "prix",
+# ]
+
+def get_property_type(user_query):
+    q = user_query.lower()
+    for word in PROPERTY_KEYWORDS:
+        if word in q:
+            return word
+    return None
+    
+def search_properties(user_query, type, top_k=5):
     query_embedding = embed_content(user_query)
 
-    results = Property.objects.annotate(
+    matching_properties = Property.objects.filter(property_type=type).exclude(embedding=None)
+
+    results = matching_properties.annotate(
         distance=CosineDistance("embedding", query_embedding)
     ).order_by("distance")[:top_k]
 
@@ -33,9 +51,10 @@ def send_message(request):
     if request.method == 'POST':
 
         user_message = request.POST.get('user_message')
+        property_type = get_property_type(user_message)
 
-        if any(word in user_message.lower() for word in PROPERTY_KEYWORDS):
-            top_properties = search_properties(user_message, top_k=3)
+        if property_type:
+            top_properties = search_properties(user_message, property_type, top_k=3)
 
             if top_properties:
                 properties_text = "\n\n".join(
@@ -49,7 +68,13 @@ def send_message(request):
                 )
                 bot_response = generate_content(prompt)
             else:
-                bot_response = "Je n’ai trouvé aucune propriété correspondant à ta recherche."
+                prompt = (
+                    f"L'utilisateur a dit: '{user_message}'.\n"
+                    f"Mais rien ne correspond à sa recherche.\n"
+                    "Réponds: Je n’ai trouvé aucune propriété correspondant à ta recherche.\n"
+                    "Tu peux aussi lui demander des détails supplémentaires.\n"
+                )
+                bot_response = generate_content(prompt)
 
         else:
             bot_response = generate_content(user_message)

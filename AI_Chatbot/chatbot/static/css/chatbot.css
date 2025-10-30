@@ -4,6 +4,7 @@ body {
 
 .bg-p {
     background-color: #062897;
+    color: white !important;
     /* max-width: 800px; */
 }
 
