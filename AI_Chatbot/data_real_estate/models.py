@@ -119,11 +119,9 @@ class Terrain(Property):
             f"Un {self.property_type} avec une superficie de {self.surface_area} m² "
             f"situé à {self.location} pour un prix de {self.price} FCFA en {self.transaction_type}."
         )
-
         return type_info
 
 # from data_real_estate.models import *
-
 # Property.objects.all()
 
 # property1 = Logement.objects.create(transaction_type="location", property_type="maison", location="Cotonou, Cadjèhoun", price=1000000, nb_bedrooms=5, nb_bathrooms=3, surface_area=800, has_parking=True, is_furnished=True)
