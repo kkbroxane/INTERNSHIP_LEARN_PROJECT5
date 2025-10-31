@@ -90,10 +90,7 @@ class Professionel(Property):
         validators=[MinValueValidator(1)],
         help_text="Le nombre de pièces doit être strictement supérieur à 0."
     )
-    nb_bathrooms = models.PositiveSmallIntegerField(
-        validators=[MinValueValidator(1)],
-        help_text="Le nombre de douches doit être strictement supérieur à 0."
-    )
+    nb_bathrooms = models.PositiveSmallIntegerField()
     is_furnished = models.BooleanField()
 
     def type_info(self):

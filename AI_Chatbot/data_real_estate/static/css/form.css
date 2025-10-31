@@ -1,0 +1,24 @@
+/* body {
+
+} */
+
+/* Ensures uniform field size */
+.form-control, 
+.form-select {
+  height: 58px !important;
+  font-size: 1rem;
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+}
+
+/* Fix label positioning inside floating fields */
+.form-floating > label {
+  padding: 0.75rem 1rem;
+}
+
+/* Button consistency */
+.btn-lg {
+  height: 58px;
+  font-size: 1rem;
+  border-radius: 0.5rem;
+}

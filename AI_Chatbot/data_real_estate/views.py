@@ -1,5 +1,4 @@
 from django.shortcuts import render, redirect
-from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
 from .models import *
 
@@ -15,7 +14,7 @@ PROFESSIONEL_TYPES = [
 ]
 
 def convert_to_boolean(field):
-    if field == 'Oui':
+    if field == 'oui':
         return True
     return False
 
@@ -46,6 +45,7 @@ def property_form(request):
             return professionel_form(base_info)
         else:
             return terrain_form(base_info)
+    return render(request, 'professionel_form.html')
 
 def logement_form(request, base_info):
     if request.method == 'POST':
@@ -67,6 +67,7 @@ def logement_form(request, base_info):
         )
         logement.get_property_embedding()
         return redirect('properties_list')
+    return render(request, 'logement_form.html')
 
 def professionel_form(request, base_info):
     if request.method == 'POST':
@@ -86,6 +87,7 @@ def professionel_form(request, base_info):
         )
         professionel.get_property_embedding()
         return redirect('properties_list')
+    return render(request, 'professionel_form.html')
 
 def terrain_form(base_info):
     terrain = Terrain.objects.create(

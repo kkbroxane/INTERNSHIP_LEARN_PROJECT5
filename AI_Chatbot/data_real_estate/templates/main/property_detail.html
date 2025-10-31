@@ -1,0 +1,64 @@
+{% extends 'main_base.html' %}
+{% load static %}
+
+{% block tilte %} 
+    IMMOBIL - properties
+{% endblock %}
+
+<!-- Page content -->
+{% block content %}
+
+    <div class="bg-light flex-fill">
+      <div class="container mt-4" style="max-width: 1000px;">
+        <!-- All Articles Section (Featured Articles & Home) -->
+        <section id="all-properties-section">
+          <div id="all-properties" class="row">
+            {% for property in properties %}
+              <div class="col-md-3 mb-3">
+                <div class="card h-100">
+                  <img src="{% static 'img/real_estate.png %}" class="card-img-top" alt="image">
+                  <div class="card-body">
+                    <h3><a href="{% url 'property_detail' property.id %}">{{ property.property_type }}</a></h3>
+                    <div class="article-meta mb-2">
+                      Prix : {{ property.price }} FCFA | <span class="article-category">{{ property.transaction_type }}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            {% endfor %}
+          </div>
+      </div>
+    </div>
+{% endblock %}
+<!-- Page content End -->
+
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4" style="max-width: 800px;">
+
+    <div class="mb-3">
+        <a href="{% url 'home' %}" class="btn btn-outline-primary btn-sm">
+            ← Back to Homepage
+        </a>
+    </div>
+
+    <h2 class="mb-3">{{ article.title }}</h2>
+
+    <p class="text-muted">
+        By {{ article.author.first_name }} {{ article.author.last_name }} on {{ article.date }}
+    </p>
+
+    <p class="text-muted">
+        From : {{ article.category}}
+    </p>
+
+    {% if article.image %}
+        <img src="{{ article.image.url }}" class="img-fluid mb-4" width="800" alt="{{ article.title }}">
+    {% endif %}
+
+    <div>
+        {{ article.content|linebreaks }}
+    </div>
+</div>
+{% endblock %}

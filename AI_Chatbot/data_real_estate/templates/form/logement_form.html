@@ -1,0 +1,68 @@
+{% extends 'form_base.html' %}
+{% load static %}
+
+{% block extra_links %}
+  <!-- Template css -->
+  <link rel="stylesheet" href="{% static 'css/form.css' %}">
+{% endblock %}
+
+{% block content %}
+<section class="p-3 p-md-4 p-xl-5" style="background-color: #001f4d;">
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-12 col-md-9 col-lg-7 col-xl-6 col-xxl-5">
+        <div class="card border border-light-subtle rounded-4">
+          <div class="card-body p-3 p-md-4 p-xl-5">
+
+            <div class="text-center mb-5">
+              <h2 class="h4">Informations complémentaires</h2>
+            </div>
+
+            <form method="post">
+              {% csrf_token %}
+
+              <!-- Nombre de chambres -->
+              <div class="form-floating mb-3">
+                <input type="number" class="form-control" id="nb_bedrooms" name="nb_bedrooms" min="1" step="1" placeholder="Nombre de chambres" required>
+                <label for="nb_bedrooms">Nombre de chambres</label>
+              </div>
+
+              <!-- Nombre de douches -->
+              <div class="form-floating mb-3">
+                <input type="number" class="form-control" id="nb_bathrooms" name="nb_bathrooms" min="1" step="1" placeholder="Nombre de douches" required>
+                <label for="nb_bathrooms">Nombre de douches</label>
+              </div>
+
+
+              <!-- Has parking ? -->
+              <div class="mb-3">
+                <select class="form-select" name="has_parking" id="has_parking" required>
+                  <option value="" disabled selected hidden>Le bien dispose-t-il d'un parking ?</option>
+                  <option value="oui">Oui</option>
+                  <option value="non">Non</option>
+                </select>
+              </div>
+
+              <!-- Is furnished ? -->
+              <div class="mb-3">
+                <select class="form-select" name="is_furnished" id="is_furnished" required>
+                  <option value="" disabled selected hidden>Le bien est-il meublé ?</option>
+                  <option value="oui">Oui</option>
+                  <option value="non">Non</option>
+                </select>
+              </div>
+
+              <!-- Submit Button -->
+              <div class="d-grid">
+                <button class="btn btn-primary btn-lg" type="submit">Soumettre</button>
+              </div>
+
+            </form>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

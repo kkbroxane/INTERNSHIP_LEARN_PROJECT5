@@ -18,12 +18,14 @@ from django.contrib import admin
 from django.urls import path, include
 
 from chatbot.views import *
+from data_real_estate.views import *
 
 urlpatterns = [
     # path('admin/', admin.site.urls),
     # path('chatbot/', include('chatbot.urls'))
     path('send', send_message, name='send_message'),
-    path('', list_messages, name='list_messages'),
+    # path('', list_messages, name='list_messages'),
+    path('', property_form, name='property_form'),
     # path('', simple_view, name='simple_view'),
 
 ]

@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %} {% endblock %}</title>
+
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" 
+        rel="stylesheet"
+        integrity="sha384-KK94CHFLLe+nY2dmCWGMq91rCGa5gtU4mk92HdvYe+M/SXH301p5ILy+dN9+nJOZ" 
+        crossorigin="anonymous">
+
+  <!-- Font Awesome (for icons in sidebar) -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+        integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw=="
+        crossorigin="anonymous" 
+        referrerpolicy="no-referrer">
+  
+  <!-- Template stylesheet -->
+  <link rel="stylesheet" href="{% static 'css/main.css' %}">
+
+</head>
+
+<body>
+  <div class="container-fluid p-0 d-flex h-100">
+
+    <!-- Sidebar -->
+    <div id="bdSidebar" 
+         class="d-flex flex-column flex-shrink-0 p-3 offcanvas-md offcanvas-start">
+      <a href="#" class="navbar-brand mb-4"></a>
+      <ul class="nav nav-pills flex-column mb-auto">
+        <li class="nav-item mb-2">
+          <a href="#home" class="sidebar-link" id="sidebar-home">
+            <i class="fa-solid fa-house sidebar-icon"></i> Accueil
+          </a>
+        </li>
+        <li class="nav-item mb-2">
+            <a href="{% url 'create_article' %}" class="sidebar-link" id="sidebar-create">
+                <i class="fa-solid fa-plus sidebar-icon"></i> Ajouter un bien
+            </a>
+        </li>
+        <li class="nav-item mb-2">
+            <a href="#Chatbot" class="sidebar-link" id="sidebar-inbox">
+              <i class="fa-regular fa-comments sidebar-icon"></i> Chatbot
+            </a>
+        </li>
+      </ul>
+      <hr>
+    </div>
+    <!-- Sidebar End -->
+
+    <!-- Page content -->
+    {% block content %} {% endblock %}
+
+  </div>
+
+
+  <!-- Bootstrap JS Bundle -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"
+          integrity="sha384-ENjdO4Dr2bkBIFxQpeoJQFZ8A1MfZZr9+7r2k5LJr59b6EGGoI1E6v2lF1F0zqzN"
+          crossorigin="anonymous"></script>
+
+  <script>
+    // Sidebar navigation behavior
+    document.getElementById('sidebar-home').addEventListener('click', function(e){
+      e.preventDefault();
+      document.getElementById('all-articles-section').classList.remove('hidden');
+      document.getElementById('my-articles-section').classList.add('hidden');
+      setActiveSidebar(this);
+    });
+    document.getElementById('sidebar-my-articles').addEventListener('click', function(e){
+      e.preventDefault();
+      document.getElementById('all-articles-section').classList.add('hidden');
+      document.getElementById('my-articles-section').classList.remove('hidden');
+      setActiveSidebar(this);
+    });
+
+    // Helper to set active sidebar link
+    function setActiveSidebar(activeElem) {
+      document.querySelectorAll('.sidebar-link').forEach(function(link){
+        link.classList.remove('active');
+      });
+      activeElem.classList.add('active');
+    }
+  </script>
+
+  {% block scripts %} {% endblock %}
+
+</body>
+</html>
