@@ -1,6 +1,5 @@
 from django import forms
 
-
 class BasePropertyForm(forms.Form):
     TRANSACTION_CHOICES = [
         ('location', 'Location'),

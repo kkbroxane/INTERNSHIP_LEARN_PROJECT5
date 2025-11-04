@@ -1,138 +1,69 @@
-{% extends 'base.html' %}
 {% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
 
-{% block title %}
-  
-{% endblock %}
+    <!-- Favicon -->
+    <link href="{% static 'img/favicon.ico' %}" rel="icon">
 
-{% block extra_links %}
-  <link href="{% static 'img/favicon.ico' %}" rel="icon">
-  <link rel="stylesheet" href="{% static 'css/chatbot_style.css' %}">
-{% endblock %}
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <link href="{% static 'css/chatbot.css' %}" rel="stylesheet">
 
+</head>
 
-{% block content %}
-<div class="chat-container">
-  <div class="card flex-grow-1">
-    <div class="card-header bg_info text-white d-flex justify-content-between align-items-center">
-        <span>IMMOBIL Chatbot</span>
-        <a href="{% url 'clear_chat' %}" class="btn btn-danger btn-sm">
-            EFFACER
-        </a>
+<body>
+      <!-- Just an image -->
+  <nav class="navbar navbar-light bg-light fixed-top shadow-sm">
+    <a class="navbar-brand" href="#">
+    <img src="{% static 'img/favicon.ico' %}" width="50px"/><span>  IMMOBIL</span>
+    </a>
+  </nav>
+
+  <div class="px-0 py-0 chat-box bg-white">
+
+  {% for m in messages %}
+
+    <!-- Receiver Message-->
+    <div class="media my-3 w-75 ml-auto">
+      <div class="media-body">
+          <div class="bg-p rounded py-3 px-3 mb-0">
+              <p class="text-small mb-0 text-receive">{{ m.user_message|linebreaks }}</p>
+          </div>
+          <p class="small mb-0 text-muted">Vous</p>
+        </div>
     </div>
 
-    <div class="card-body messages-box">
-      
-      <ul class="list-unstyled messages-list">
-        {% for m in messages %}
-          <li class="message sent">
-            <div class="message-text">
-              <div class="message-sender">
-                <b>Vous</b>
-              </div>
-              <div class="message-content">
-                {{ m.user_message|linebreaks }}
-              </div>
-            </div>
-          </li> <!-- User -->
-          <li class="message received">
-            <div class="message-text">
-              <div class="message-sender">
-                <b>Chatbot</b>
-              </div>
-              <div class="message-content">
-                {{ m.bot_response|linebreaks }}
-              </div>
-            </div>
-          </li> <!-- Chatbot -->
-        {% empty %}
-          <li class="message received">
-            <div class="message-text">
-              <div class="message-sender">
-                <b>Chatbot</b>
-              </div>
-              <div class="message-content">
-                Bonjour !<br>Comment puis-je vous aider ?
-              </div>
-            </div>
-          </li>  <!-- Default -->       
-        {% endfor %}
-      </ul>
-      
+    <!-- Sender Message-->
+    <div class="media my-3 w-75">
+      <div class="media-body">
+        <div class="bg-s rounded py-3 px-3">
+          <p class="text-small mb-0 text-receive">{{ m.bot_response|linebreaks }}</p>
+        </div>
+          <p class="small mb-0 text-muted">Bot</p>
+      </div>
     </div>
-    <br><br>
-    <br><br>
-    <br><br>
+  {% empty %}
+    Aucun message.
+  {% endfor %}
+        
   </div>
-  <form method="POST" class="message-form">
-    {%csrf_token%}
+
+  <!-- Typing area -->
+  <form action="{% url 'send_message' %}" method="post" class="bg-light fixed-bottom shadow-lg">
+    {% csrf_token %}
     <div class="input-group">
-      <input type="text" name="user_message" class="form-control message-input" placeholder="Entrez un message...">
+      <input name="user_message" type="text" placeholder="Type a message" aria-describedby="button-addon2" class="form-control bg-i rounded-0 border-0 py-4 bg-s">
       <div class="input-group-append">
-        <button type="submit" class="btn btn-primary btn-send">Send</button>
+        <button id="button-addon2" type="submit" class="btn btn-link"> <i class="fa fa-paper-plane"></i></button>
       </div>
     </div>
   </form>
-</div>
 
-<script>
-  const messagesList = document.querySelector('.messages-list');
-  const messageForm = document.querySelector('.message-form');
-  const messageInput = document.querySelector('.message-input');
-
-  // upon submission of send button...
-  messageForm.addEventListener('submit', (event)=> {
-    event.preventDefault() // prevent refresh of page on click
-    
-    const message = messageInput.value.trim();
-    if (message.length === 0){
-      return;
-    }
-
-    const messageItem = document.createElement('li');
-    messageItem.classList.add('message','sent');
-    messageItem.innerHTML = ` 
-        <div class="message-text">
-          <div class="message-sender">
-            <b>Vous</b>
-          </div>
-          <div class="message-content">
-            ${message}
-          </div>
-        </div>
-    `;
-    messagesList.appendChild(messageItem);
-
-    //clear from input box  
-    messageInput.value = '';
-
-    //send data to backend
-    fetch("{% url 'send_message' %}", {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      body: new URLSearchParams({
-        'csrfmiddlewaretoken': document.querySelector('[name=csrfmiddlewaretoken]').value,
-        'user_message': message
-      })
-    })
-      .then(response => response.json())
-      .then(data => {
-        const response = data.response;
-        const messageItem = document.createElement('li');
-        messageItem.classList.add('message', 'received');
-        messageItem.innerHTML = `
-        <div class="message-text">
-            <div class="message-sender">
-              <b>Chatbot</b>
-            </div>
-            <div class="message-content">
-                ${response}
-            </div>
-        </div>
-          `;
-        messagesList.appendChild(messageItem);
-      });
-  });
-</script>
-
-{% endblock %}
+</body>
+</html>

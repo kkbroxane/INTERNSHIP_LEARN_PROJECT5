@@ -133,4 +133,4 @@ def list_messages(request):
     print("\n**************************\n\n")
 
     messages = ChatMessage.objects.all()
-    return render(request, 'chat.html', { 'messages': messages })
+    return render(request, 'chatbot.html', { 'messages': messages })
