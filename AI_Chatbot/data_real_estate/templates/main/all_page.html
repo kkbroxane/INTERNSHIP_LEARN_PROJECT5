@@ -1,4 +1,4 @@
-{% extends 'main_base.html' %}
+{% extends 'main/main_base.html' %}
 {% load static %}
 
 {% block tilte %} 
@@ -10,20 +10,21 @@
 
     <div class="bg-light flex-fill">
       <div class="container mt-4" style="max-width: 1000px;">
-        <!-- All Articles Section (Featured Articles & Home) -->
         <section id="all-properties-section">
           <div id="all-properties" class="row">
             {% for property in properties %}
-              <div class="col-md-3 mb-3">
+              <div class="col-md-4 mb-3 mt-3">
+                <a href="{% url 'property_detail' property.id %}">
                 <div class="card h-100">
-                  <img src="{% static 'img/real_estate.png %}" class="card-img-top" alt="image">
+                  <img src="{% static 'img/real_estate.png' %}" class="card-img-top" alt="image">
                   <div class="card-body">
-                    <h3><a href="{% url 'property_detail' property.id %}">{{ property.property_type }}</a></h3>
+                    <h3 class="mt-2">{{ property.property_type }}</h3>
                     <div class="article-meta mb-2">
                       Prix : {{ property.price }} FCFA | <span class="article-category">{{ property.transaction_type }}</span>
                     </div>
                   </div>
                 </div>
+                </a>
               </div>
             {% endfor %}
           </div>

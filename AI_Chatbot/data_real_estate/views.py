@@ -1,101 +1,97 @@
-from django.shortcuts import render, redirect
-from django.shortcuts import get_object_or_404
-from .models import *
+from django import forms
+from django.shortcuts import redirect
+from django.urls import reverse
+from formtools.wizard.views import SessionWizardView
+from .forms import BasePropertyForm, LogementForm, ProfessionelForm
+from .models import Logement, Professionel, Terrain
 
-LOGEMENT_TYPES = [
-    'villa',
-    'maison',
-    'appartement',
+FORMS = [
+    ("base", BasePropertyForm),
+    ("logement", LogementForm),
+    ("professionel", ProfessionelForm),
 ]
 
-PROFESSIONEL_TYPES = [
-    'bureau',
-    'boutique',
-]
+TEMPLATES = {
+    "base": "form/wizard_form.html",
+    "logement": "form/wizard_form.html",
+    "professionel": "form/wizard_form.html",
+}
 
-def convert_to_boolean(field):
-    if field == 'oui':
-        return True
-    return False
+class PropertyWizard(SessionWizardView):
+    form_list = FORMS
+    template_name = "form/wizard_form.html"
 
-def properties_list(request):
-    properties = Property.objects.all()
-    return render(request, '', {'properties': properties})
+    def get_template_names(self):
+        return [TEMPLATES[self.steps.current]]
 
-def property_detail(request, p_id):
-    property = get_object_or_404(Property, pk=p_id)
-    property = property.get_child_instance()
-    return render(request, '', {'property': property}) 
+    def get_form_list(self):
+        form_list = super().get_form_list()
 
-def property_form(request):
-    if request.method == 'POST':
-        property_type = request.POST.get('property_type')
+        for form_class in form_list.values():
+            for name, field in form_class.base_fields.items():
+                field.is_boolean = isinstance(field, forms.BooleanField)
 
-        base_info = {
-            'transaction_type': request.POST.get('transaction_type'),
-            'property_type': property_type,
-            'location': request.POST.get('location'),
-            'surface_area': request.POST.get('surface_area'),
-            'price': request.POST.get('price'),
-        }
+        step_data = self.storage.get_step_data('base')
+        if not step_data:
+            return form_list
 
-        if property_type in LOGEMENT_TYPES:
-            return logement_form(base_info)
-        elif property_type in PROFESSIONEL_TYPES:
-            return professionel_form(base_info)
+        property_type = step_data.get('base-property_type')
+        if not property_type:
+            return form_list
+
+        if property_type in ['villa', 'maison', 'appartement']:
+            form_list.pop('professionel', None)
+
+        elif property_type in ['bureau', 'boutique']:
+            form_list.pop('logement', None)
+
         else:
-            return terrain_form(base_info)
-    return render(request, 'professionel_form.html')
+            form_list.pop('logement', None)
+            form_list.pop('professionel', None)
 
-def logement_form(request, base_info):
-    if request.method == 'POST':
-        nb_bedrooms = request.POST.get('nb_bedrooms')
-        nb_bathrooms = request.POST.get('nb_bathrooms')
-        has_parking = request.POST.get('has_parking')
-        is_furnished = request.POST.get('is_furnished')
+        return form_list
 
-        logement = Logement.objects.create(
-            transaction_type = base_info['transaction_type'],
-            property_type = base_info['property_type'],
-            location = base_info['location'],
-            surface_area = base_info['surface_area'],
-            price = base_info['price'],
-            nb_bedrooms = nb_bedrooms,
-            nb_bathrooms = nb_bathrooms,
-            has_parking = convert_to_boolean(has_parking),
-            is_furnished = convert_to_boolean(is_furnished)
-        )
-        logement.get_property_embedding()
-        return redirect('properties_list')
-    return render(request, 'logement_form.html')
+    def done(self, form_list, **kwargs):
+        data = self.get_all_cleaned_data()
 
-def professionel_form(request, base_info):
-    if request.method == 'POST':
-        nb_rooms = request.POST.get('rooms')
-        nb_bathrooms = request.POST.get('nb_bathrooms')
-        is_furnished = request.POST.get('is_furnished')
+        property_type = data['property_type']
 
-        professionel = Professionel.objects.create(
-            transaction_type = base_info['transaction_type'],
-            property_type = base_info['property_type'],
-            location = base_info['location'],
-            surface_area = base_info['surface_area'],
-            price = base_info['price'],
-            nb_rooms = nb_rooms,
-            nb_bathrooms = nb_bathrooms,
-            is_furnished = convert_to_boolean(is_furnished)
-        )
-        professionel.get_property_embedding()
-        return redirect('properties_list')
-    return render(request, 'professionel_form.html')
+        if property_type in ['villa', 'maison', 'appartement']:
+            logement = Logement.objects.create(
+                transaction_type=data['transaction_type'],
+                property_type=property_type,
+                location=data['location'],
+                surface_area=data['surface_area'],
+                price=data['price'],
+                nb_bedrooms=data['nb_bedrooms'],
+                nb_bathrooms=data['nb_bathrooms'],
+                has_parking=data['has_parking'],
+                is_furnished=data['is_furnished']
+            )
+            logement.generate_embedding_for_property()
+            return redirect(reverse('property_detail', kwargs={'p_id': logement.id}))
 
-def terrain_form(base_info):
-    terrain = Terrain.objects.create(
-        transaction_type = base_info['transaction_type'],
-        property_type = base_info['property_type'],
-        location = base_info['location'],
-        surface_area = base_info['surface_area'],
-        price = base_info['price'],
-    )
-    terrain.get_property_embedding()
-    return redirect('properties_list')
+        elif property_type in ['bureau', 'boutique']:
+            professionel = Professionel.objects.create(
+                transaction_type=data['transaction_type'],
+                property_type=property_type,
+                location=data['location'],
+                surface_area=data['surface_area'],
+                price=data['price'],
+                nb_rooms=data['nb_rooms'],
+                nb_bathrooms=data['nb_bathrooms'],
+                is_furnished=data['is_furnished']
+            )
+            professionel.generate_embedding_for_property()
+            return redirect(reverse('property_detail', kwargs={'p_id': professionel.id}))
+
+        else:
+            terrain = Terrain.objects.create(
+                transaction_type=data['transaction_type'],
+                property_type=property_type,
+                location=data['location'],
+                surface_area=data['surface_area'],
+                price=data['price']
+            )
+            terrain.generate_embedding_for_property()
+            return redirect(reverse('property_detail', kwargs={'p_id': terrain.id}))

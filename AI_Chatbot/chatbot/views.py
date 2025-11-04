@@ -13,21 +13,17 @@ PROPERTY_KEYWORDS = [
     "bureau",
     "boutique",
     "terrain",
-    # "meublé",
-    # "chambre",
-    # "douche",
-    # "FCFA",
-    # "prix",
 ]
 
-# OTHER_KEYWORDS = [
-#     "logement",
-#     "meublé",
-#     "chambre",
-#     "douche",
-#     "FCFA",
-#     "prix",
-# ]
+OTHER_KEYWORDS = [
+    "logement",
+    "emplacement",
+    "meublé",
+    "chambre",
+    "douche",
+    "FCFA",
+    "prix",
+]
 
 def get_property_type(user_query):
     q = user_query.lower()
@@ -76,7 +72,14 @@ def send_message(request):
                 )
                 bot_response = generate_content(prompt)
 
+        # elif (any(word) in user_message for word in OTHER_KEYWORDS):
+        #     bot_response = "Pourriez-vous me fournir plus de détails sur ce que vous recherchez ?"
         else:
+            # bot_response = (
+            #     "Je comprends votre demande, mais je ne dispose pas des connaissances nécessaires pour y répondre correctement. "
+            #     "Mon rôle se limite à vous accompagner dans vos recherches immobilières. "
+            #     "N’hésitez pas à me poser une autre question dans ce cadre, je serai ravi de vous aider !"
+            # )
             bot_response = generate_content(user_message)
 
         ChatMessage.objects.create(user_message=user_message, bot_response=bot_response)    
@@ -84,8 +87,4 @@ def send_message(request):
 
 def list_messages(request):
     messages = ChatMessage.objects.all()
-    return render(request, 'chatbotml', { 'messages': messages })
-
-    # print("\n\n*******************\n")
-    # print(results)
-    # print("*******************\n\n")
+    return render(request, 'chatbot.html', { 'messages': messages })

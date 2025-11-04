@@ -17,15 +17,10 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 
-from chatbot.views import *
-from data_real_estate.views import *
+from data_real_estate.views_extra import properties_list
 
 urlpatterns = [
-    # path('admin/', admin.site.urls),
-    # path('chatbot/', include('chatbot.urls'))
-    path('send', send_message, name='send_message'),
-    # path('', list_messages, name='list_messages'),
-    path('', property_form, name='property_form'),
-    # path('', simple_view, name='simple_view'),
-
+    path('chatbot/', include('chatbot.urls')),
+    path('data_real_estate/', include('data_real_estate.urls')),
+    path('', properties_list, name='properties_list'),
 ]

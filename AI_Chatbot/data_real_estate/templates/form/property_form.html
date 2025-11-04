@@ -1,4 +1,4 @@
-{% extends 'form_base.html' %}
+{% extends 'form/form_base.html' %}
 {% load static %}
 
 {% block extra_links %}
@@ -19,7 +19,7 @@
               <h3 class="fs-6 fw-normal text-secondary m-0">Enter your details below</h3>
             </div>
 
-            <form method="post">
+            <form method="post" action="{% url 'property_form' %}">
               {% csrf_token %}
 
               <!-- Transaction Type -->

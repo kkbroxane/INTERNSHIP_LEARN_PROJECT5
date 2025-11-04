@@ -1,4 +1,4 @@
-{% extends 'form_base.html' %}
+{% extends 'form/form_base.html' %}
 {% load static %}
 
 {% block extra_links %}
@@ -18,7 +18,7 @@
               <h2 class="h4">Informations complémentaires</h2>
             </div>
 
-            <form method="post">
+            <form method="post" action="{% url 'logement_form' %}">
               {% csrf_token %}
 
               <!-- Nombre de chambres -->

@@ -1,4 +1,4 @@
-{% extends 'form_base.html' %}
+{% extends 'form/form_base.html' %}
 {% load static %}
 
 {% block extra_links %}
@@ -18,13 +18,13 @@
               <h2 class="h4">Informations complémentaires</h2>
             </div>
 
-            <form method="post">
+            <form method="post" action="{% url 'professionel_form' %}">
               {% csrf_token %}
 
               <!-- Nombre de pièces -->
               <div class="form-floating mb-3">
-                <input type="number" class="form-control" id="nb_bedrooms" name="nb_bedrooms" min="1" step="1" placeholder="Nombre de pièces" required>
-                <label for="nb_bedrooms">Nombre de pièces</label>
+                <input type="number" class="form-control" id="nb_rooms" name="nb_rooms" min="1" step="1" placeholder="Nombre de pièces" required>
+                <label for="nb_rooms">Nombre de pièces</label>
               </div>
 
               <!-- Nombre de douches -->

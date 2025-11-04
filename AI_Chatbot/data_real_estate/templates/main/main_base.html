@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -23,7 +24,16 @@
 </head>
 
 <body>
-  <div class="container-fluid p-0 d-flex h-100">
+
+    <!-- Topbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark custom-darkblue">
+      <div class="container">
+        <a class="navbar-brand" style="font-weight: bolder;" href="#">IMMOBIL</a>
+      </div>
+    </nav>
+    <!-- Topbar End -->
+
+  <div class="container-fluid p-0 d-flex">
 
     <!-- Sidebar -->
     <div id="bdSidebar" 
@@ -31,17 +41,17 @@
       <a href="#" class="navbar-brand mb-4"></a>
       <ul class="nav nav-pills flex-column mb-auto">
         <li class="nav-item mb-2">
-          <a href="#home" class="sidebar-link" id="sidebar-home">
+          <a href="{% url 'properties_list' %}" class="sidebar-link" id="sidebar-home">
             <i class="fa-solid fa-house sidebar-icon"></i> Accueil
           </a>
         </li>
         <li class="nav-item mb-2">
-            <a href="{% url 'create_article' %}" class="sidebar-link" id="sidebar-create">
+            <a href="{% url 'add_property' %}" class="sidebar-link" id="sidebar-create">
                 <i class="fa-solid fa-plus sidebar-icon"></i> Ajouter un bien
             </a>
         </li>
         <li class="nav-item mb-2">
-            <a href="#Chatbot" class="sidebar-link" id="sidebar-inbox">
+            <a href="{% url 'list_messages' %}" class="sidebar-link" id="sidebar-inbox">
               <i class="fa-regular fa-comments sidebar-icon"></i> Chatbot
             </a>
         </li>
