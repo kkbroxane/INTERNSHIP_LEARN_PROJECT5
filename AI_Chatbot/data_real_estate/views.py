@@ -12,14 +12,14 @@ FORMS = [
 ]
 
 TEMPLATES = {
-    "base": "form/wizard_form.html",
-    "logement": "form/wizard_form.html",
-    "professionel": "form/wizard_form.html",
+    "base": "form/property_form.html",
+    "logement": "form/property_form.html",
+    "professionel": "form/property_form.html",
 }
 
 class PropertyWizard(SessionWizardView):
     form_list = FORMS
-    template_name = "form/wizard_form.html"
+    template_name = "form/property_form.html"
 
     def get_template_names(self):
         return [TEMPLATES[self.steps.current]]
