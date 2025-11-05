@@ -137,7 +137,6 @@ LLAMA_GENERATION_URL = "http://localhost:11434/api/generate"
 
 LLAMA_EMBEDDING_URL = "http://localhost:11434/api/embeddings"
 
-LLAMA_CHATBOT_RULES = ""
 
 
 # You are a professional real estate assistant.  

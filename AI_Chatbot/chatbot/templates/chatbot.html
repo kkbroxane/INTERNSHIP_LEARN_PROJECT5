@@ -10,8 +10,8 @@
   <link rel="stylesheet" href="{% static 'css/chatbot_style.css' %}">
 {% endblock %}
 
-
 {% block content %}
+
 <div class="chat-container">
   <div class="card flex-grow-1">
     <div class="card-header bg_info text-white d-flex justify-content-between align-items-center">
@@ -69,7 +69,7 @@
     <div class="input-group">
       <input type="text" name="user_message" class="form-control message-input" placeholder="Entrez un message...">
       <div class="input-group-append">
-        <button type="submit" class="btn btn-primary btn-send">Send</button>
+        <button id="sendBtn" type="submit" class="btn btn-primary btn-send">Send</button>
       </div>
     </div>
   </form>
@@ -80,10 +80,49 @@
   const messagesList = document.querySelector('.messages-list');
   const messageForm = document.querySelector('.message-form');
   const messageInput = document.querySelector('.message-input');
+  const sendBtn = document.getElementById('sendBtn');
+  const nav = performance.getEntriesByType('navigation')[0];
 
-  // upon submission of send button...
+  function scrollToBottom() {
+    messagesList.scrollTop = messagesList.scrollHeight;
+  }
+
+  if (nav.type === "reload") {
+      fetch("{% url 'is_reloaded' %}", {
+          method: 'POST',
+          headers: {
+              "X-CSRFToken": "{{ csrf_token }}",
+          },
+      });
+  }
+
+  function setInputDisabled(disabled) {
+    messageInput.disabled = disabled;
+    sendBtn.disabled = disabled;
+    if (!disabled) messageInput.focus();
+  }
+
+  function showTypingIndicator() {
+    const li = document.createElement('li');
+    li.classList.add('typing-indicator');
+    li.id = "typingIndicator";
+    li.innerHTML = `
+        <div class="typing-dots">
+          <span>.</span><span>.</span><span>.</span>
+        </div>
+        <span>&nbsp;Réponse en cours...</span>
+    `;
+    messagesList.appendChild(li);
+    scrollToBottom();
+  }
+
+  function removeTypingIndicator() {
+    const el = document.getElementById('typingIndicator');
+    if (el) el.remove();
+  }
+
   messageForm.addEventListener('submit', (event)=> {
-    event.preventDefault() // prevent refresh of page on click
+    event.preventDefault();
     
     const message = messageInput.value.trim();
     if (message.length === 0){
@@ -94,20 +133,18 @@
     messageItem.classList.add('message','sent');
     messageItem.innerHTML = ` 
         <div class="message-text">
-          <div class="message-sender">
-            <b>Vous</b>
-          </div>
-          <div class="message-content">
-            ${message}
-          </div>
+          <div class="message-sender"><b>Vous</b></div>
+          <div class="message-content">${message}<br></div>
         </div>
     `;
     messagesList.appendChild(messageItem);
+    scrollToBottom();
 
-    //clear from input box  
     messageInput.value = '';
+    setInputDisabled(true);
 
-    //send data to backend
+    showTypingIndicator();
+
     fetch("{% url 'send_message' %}", {
       method: 'POST',
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
@@ -116,26 +153,24 @@
         'user_message': message
       })
     })
-      .then(response => response.json())
-      .then(data => {
+    .then(response => response.json())
+    .then(data => {
+        removeTypingIndicator();
         const response = data.response;
+
         const messageItem = document.createElement('li');
         messageItem.classList.add('message', 'received');
         messageItem.innerHTML = `
-        <div class="message-text">
-            <div class="message-sender">
-              <b>Chatbot</b>
-            </div>
-            <div class="message-content">
-                ${response}
-            </div>
-        </div>
-          `;
+          <div class="message-text">
+              <div class="message-sender"><b>Chatbot</b></div>
+              <div class="message-content">${response}<br></div>
+          </div>
+        `;
         messagesList.appendChild(messageItem);
-      });
+        scrollToBottom();
+        setInputDisabled(false);
+    });
   });
 </script>
-
-<!-- <script src="{% static 'js/chatbot.js' %}"></script> -->
 
 {% endblock %}

@@ -2,23 +2,9 @@ from AI_Chatbot.settings import LLAMA_GENERATION_URL, LLAMA_EMBEDDING_URL
 import requests
 import json
 
-def get_property_type(user_query):
-    q = user_query.lower()
-    for word in PROPERTY_KEYWORDS:
-        if word in q:
-            return word
-    return None
-    
-def search_properties(user_query, type, top_k=5):
-    query_embedding = embed_content(user_query)
-
-    matching_properties = Property.objects.filter(property_type=type).exclude(embedding=None)
-
-    results = matching_properties.annotate(
-        distance=CosineDistance("embedding", query_embedding)
-    ).order_by("distance")[:top_k]
-
-    return results
+MISSION = (
+    "Aider à trouver un bien (maison, villa, appartement, boutique, bureau, terrain) uniquement\n"
+)
 
 def embed_content(text):
     response = requests.post(
@@ -33,11 +19,14 @@ def is_question_of_type(message: str) -> str:
         Tu es un classifieur. Tu dois répondre UNIQUEMENT par l'un des 3 mots suivants :
 
         - "salutation" -> si le message est une salutation (bonjour, salut, hey, coucou, etc.)
-        - "oui" -> si la question concerne l'immobilier (logement, terrain, location, achat, etc.)
+        - "oui" -> si la question a rapport avec cette mission: {MISSION}
         - "non" -> si ça ne concerne ni l'immobilier ni une salutation
 
         Message : "{message}"
     """
+    print("\n\n*****question_of_type*****\n")
+    print("IS IN CLASSF")
+    print("\n**************************\n\n")
 
     result = generate_content(classifier_prompt).strip().lower()
     return result

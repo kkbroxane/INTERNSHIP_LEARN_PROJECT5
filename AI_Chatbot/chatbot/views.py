@@ -1,5 +1,5 @@
 from django.db.models import F
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 from pgvector.django import CosineDistance
 from django.shortcuts import redirect, render
 from django.conf import settings
@@ -30,6 +30,12 @@ def clear_current_chat(request):
     all_messages = ChatMessage.objects.all()
     all_messages.delete()
     return redirect('list_messages')
+
+def is_reloaded(request):
+    ChatMessage.objects.all().delete()
+    print("\n\n****  !!!! RELOAD !!!!  ****\n\n")
+    return HttpResponse(status=204)
+
 
 def get_property_type(user_query):
     q = user_query.lower()
@@ -68,7 +74,6 @@ def send_message(request):
         print("\n**************************\n\n")
 
 
-        # if not is_real_estate_question(user_message):
         if query_type == "non":
             bot_response = (
                 "Je suis un assistant dédié exclusivement à l’immobilier. "
@@ -128,9 +133,5 @@ def send_message(request):
 
 
 def list_messages(request):
-    print("\n\n*********list*************\n")
-    print(request.method)
-    print("\n**************************\n\n")
-
     messages = ChatMessage.objects.all()
     return render(request, 'chatbot.html', { 'messages': messages })
