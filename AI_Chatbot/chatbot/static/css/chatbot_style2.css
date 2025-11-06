@@ -9,11 +9,10 @@ body, html {
 .typing-indicator {
   display: flex;
   align-items: center;
-  margin: 6px 0 6px 5px;
+  margin: 6px 0;
   padding-left: 10px;
   font-style: italic;
   color: gray;
-  justify-content: flex-start;
 }
 
 .typing-dots span {
@@ -39,48 +38,24 @@ body, html {
 .messages-list {
     padding-left: 0;
     height: 100%;
-    display: flex;
-    flex-direction: column;
 }
 
 .message {
     margin-bottom: 15px;
     list-style: none;
-    width: 100%;
-    display: flex;
 }
-
-.message.sent {
-    justify-content: flex-end;
-}
-
-.message.received {
-    justify-content: flex-start;
-}
-
-/* .message-text {
-    max-width: 75%;
-    padding: 10px 14px;
-    border-radius: 16px;
-    text-align: left;
-} */
 
 .message-text {
-    width: 500px;
-    padding: 10px 14px;
-    border-radius: 16px;
-    text-align: left;
-    word-wrap: break-word;
+    padding: 10px;
+    border-radius: 5px;
 }
 
-.sent .message-text {
+.sent {
     background-color: #dcf8c6;
-    border-bottom-right-radius: 0;
 }
 
-.received .message-text {
+.received {
     background-color: #f1f0f0;
-    border-bottom-left-radius: 0;
 }
 
 .message-form {

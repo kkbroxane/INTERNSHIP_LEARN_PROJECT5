@@ -9,7 +9,7 @@ MISSION = (
 def embed_content(text):
     response = requests.post(
         url=LLAMA_EMBEDDING_URL,
-        json={"model": "llama3", "prompt": text}
+        json={"model": "llama3.2:latest", "prompt": text}
     )
     embedding = response.json()["embedding"]
     return embedding
@@ -33,7 +33,7 @@ def is_question_of_type(message: str) -> str:
 
 def generate_content(prompt):
     url = LLAMA_GENERATION_URL
-    data = {'model': 'llama3', 'prompt': prompt}
+    data = {'model': 'llama3.2:latest', 'prompt': prompt}
     response = requests.post(url, json=data, stream=True)
 
     full_text = ""
