@@ -1,7 +1,7 @@
 from django.db import models
 from django.core.validators import MinValueValidator
 from pgvector.django import VectorField
-from chatbot.views_rag import embed_content
+from chatbot.utils import embed_content
 
 TRANSACTION_TYPES = [
     ('location', 'location'),
@@ -29,7 +29,7 @@ class Property(models.Model):
         validators=[MinValueValidator(1)],
         help_text="Le prix d'un bien doit être strictement supérieur à 0."
     )
-    embedding = VectorField(dimensions=4096, null=True, blank=True)
+    embedding = VectorField(dimensions=3072, null=True, blank=True)
 
     def get_child_instance(self):
         for child in ('logement', 'professionel', 'terrain'):

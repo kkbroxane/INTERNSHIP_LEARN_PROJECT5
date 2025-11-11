@@ -8,3 +8,4 @@
 ---
 - [] review manual responses
 - [] review user query handling
+- [] stream responses (live responses, word by word)
