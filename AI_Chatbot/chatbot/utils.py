@@ -1,4 +1,4 @@
-from AI_Chatbot.settings import LLAMA_MODEL, LLAMA_GENERATION_URL, LLAMA_EMBEDDING_URL, SYSTEM_PROMPT
+from AI_Chatbot.settings import LLAMA_GENERATION_MODEL, LLAMA_EMBEDDING_MODEL, LLAMA_GENERATION_URL, LLAMA_EMBEDDING_URL, SYSTEM_PROMPT
 import textwrap
 import requests
 import json
@@ -7,7 +7,7 @@ import re
 def embed_content(message):
     response = requests.post(
         url=LLAMA_EMBEDDING_URL,
-        json={"model": LLAMA_MODEL, "prompt": message}
+        json={"model": LLAMA_EMBEDDING_MODEL, "prompt": message}
     )
     embedding = response.json()["embedding"]
     return embedding
@@ -29,7 +29,7 @@ def extract_json_dict(text: str) -> dict:
     
 def generate_content(message):
     payload = {
-        "model": LLAMA_MODEL,
+        "model": LLAMA_GENERATION_MODEL,
         "messages": [
             {"role": "system", "content": SYSTEM_PROMPT},
 
@@ -131,7 +131,7 @@ def answer_from_db(message, properties):
 
 
     payload = {
-        "model": LLAMA_MODEL,
+        "model": LLAMA_GENERATION_MODEL,
         "messages": [
             {"role": "system", "content": SYSTEM_PROMPT},
             {"role": "system", "content": f"Voici des informations utiles pour répondre à l'utilisateur: {properties}"},

@@ -133,7 +133,9 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-LLAMA_MODEL = "llama3.2:latest"
+LLAMA_GENERATION_MODEL = "llama3.2:latest"
+
+LLAMA_EMBEDDING_MODEL = "llama3.2:latest"
 
 LLAMA_GENERATION_URL = "http://localhost:11434/api/chat"
 
