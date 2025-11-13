@@ -1,10 +1,13 @@
 from django.shortcuts import redirect, render
-from django.http import JsonResponse, HttpResponse
+from django.http import JsonResponse, HttpResponse, StreamingHttpResponse
 from .models import ChatMessage
 from .utils import generate_content, answer_from_db
 from .views_ai import search_properties
 import json
 
+# Cleanup comments
+
+# ...existing code...
 def is_reloaded(request):
     ChatMessage.objects.all().delete()
     return HttpResponse(status=204)
@@ -49,3 +52,41 @@ def send_message(request):
 def list_messages(request):
     messages = ChatMessage.objects.all()
     return render(request, 'chatbot.html', { 'messages': messages })
+
+# ----------------- New agentic endpoints -----------------
+from .agent import Agent
+
+def send_message_agent(request):
+    """
+    Non-streaming agent endpoint. Reuses Agent.run().
+    Persists ChatMessage inside Agent.run as well, but we add a lightweight record here too.
+    """
+    if request.method == 'POST':
+        user_message = request.POST.get('user_message') or request.body.decode()
+        agent = Agent(top_k=3)
+        result = agent.run(user_message)
+        # result contains 'answer', 'trace', 'summary'
+        return JsonResponse({'message': user_message, 'response': result['answer'], 'trace': result['trace']})
+    return redirect('list_messages')
+
+
+def send_agent_stream(request):
+    """
+    SSE streaming endpoint. Returns a StreamingHttpResponse where each line is a JSON chunk.
+    The frontend can open an EventSource or fetch and parse lines.
+    """
+    if request.method != 'POST':
+        return redirect('list_messages')
+
+    user_message = request.POST.get('user_message') or request.body.decode()
+
+    agent = Agent(top_k=3)
+
+    def event_stream():
+        for chunk in agent.stream_run(user_message):
+            # SSE-friendly framing: send a data line per chunk followed by a blank line
+            # chunk is already a JSON string; we send it as a data: line
+            yield f"data: {chunk}\n\n"
+
+    return StreamingHttpResponse(event_stream(), content_type='text/event-stream')
+# ----------------------------------------------------------

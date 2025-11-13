@@ -142,7 +142,7 @@
 
     showTypingIndicator();
 
-    fetch("{% url 'send_message' %}", {
+    fetch("{% url 'send_agent' %}", {
       method: 'POST',
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
       body: new URLSearchParams({
