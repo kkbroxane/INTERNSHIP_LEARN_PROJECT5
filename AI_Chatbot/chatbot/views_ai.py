@@ -9,6 +9,9 @@ def search_properties(user_query, type, top_k=5):
     query_embedding = embed_content(user_query)
 
     matching_properties = Property.objects.filter(property_type=type).exclude(embedding=None)
+    if not matching_properties.exists():
+        return None
+
     results = matching_properties.annotate(
         distance=CosineDistance("embedding", query_embedding)
     ).order_by("distance")[:top_k]
