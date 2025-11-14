@@ -8,6 +8,8 @@
     - user: "Je cherche un terrain à Ouidah."
     - user: "Je cherche une boutique à Agori."
 
+- user: "Je veux louer un appartement à Cotonou, et je veux acheter un terrain."
+
 - user: "Parle moi de Python."
     - user: "Explique moi comment traiter des bases de données de maison avec openpyxl."
     - user: "Ecris moi une fonction en C."

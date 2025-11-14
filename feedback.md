@@ -9,3 +9,6 @@
 - [] review manual responses
 - [] review user query handling
 - [] stream responses (live responses, word by word)
+
+
+python manage.py shell < scripts/seed_properties.py

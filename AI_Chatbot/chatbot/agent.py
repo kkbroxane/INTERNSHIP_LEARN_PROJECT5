@@ -61,15 +61,22 @@ class Agent:
 
     def _execute(self, user_message: str, plan: Dict, trace: List[Dict]) -> str:
         relevance = plan.get("relevance", "non pertinent")
+
         if relevance in ("non pertinent", "error"):
             return plan.get("answer", "Désolé, pas de réponse disponible.")
 
         try:
+            property_type = plan.get("property_type")
+            answer = plan.get("answer")
+            if not property_type:
+                return answer
+
             results = self.tools["search_properties"].run(
-                user_message, plan.get("property_type"), top_k=self.top_k
+                user_message, property_type, top_k=self.top_k
             )
             final = self.tools["answer_from_db"].run(user_message, results)
             return final if isinstance(final, str) else json.dumps(final, ensure_ascii=False)
+
         except Exception:
             return "Désolé, une erreur est survenue."
 

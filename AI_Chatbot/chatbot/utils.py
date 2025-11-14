@@ -28,6 +28,11 @@ def extract_json_dict(text: str) -> dict:
     return json.loads(json_data)
     
 def generate_content(message):
+    print("\n\n=========USER QUERY==============\n")
+    print(message)
+    print("\n===============================\n\n")
+
+
     payload = {
         "model": LLAMA_GENERATION_MODEL,
         "messages": [

@@ -1,9 +1,8 @@
 from django.urls import path
-from .views import PropertyWizard, FORMS
-from .views_extra import properties_list, property_detail
+from .views import *
 
 urlpatterns = [
-    path('add_property/', PropertyWizard.as_view(FORMS), name='add_property'),
+    path('property_form/', property_form, name='property_form'),
     path('properties_list/', properties_list, name='properties_list'),
     path('property_detail/<int:p_id>/', property_detail, name='property_detail'),
 ]

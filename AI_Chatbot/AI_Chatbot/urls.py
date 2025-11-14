@@ -17,7 +17,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 
-from data_real_estate.views_extra import properties_list
+from data_real_estate.views import properties_list
 
 urlpatterns = [
     path('chatbot/', include('chatbot.urls')),

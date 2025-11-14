@@ -64,7 +64,7 @@
   <form method="POST" class="message-form">
     {%csrf_token%}
     <div class="input-group">
-      <input type="text" name="user_message" class="form-control message-input" placeholder="Entrez un message...">
+      <input autocomplete="off" type="text" name="user_message" class="form-control message-input" placeholder="Entrez un message...">
       <div class="input-group-append">
         <button id="sendBtn" type="submit" class="btn btn-primary btn-send">Send</button>
       </div>
@@ -75,6 +75,7 @@
 
 <script>
   const messagesList = document.querySelector('.messages-list');
+  const messagesBox = document.querySelector('.messages-box');
   const messageForm = document.querySelector('.message-form');
   const messageInput = document.querySelector('.message-input');
   const sendBtn = document.getElementById('sendBtn');
@@ -82,6 +83,7 @@
 
   function scrollToBottom() {
     messagesList.scrollTop = messagesList.scrollHeight;
+    messagesBox.scrollTop = messagesBox.scrollHeight;
   }
 
   if (nav.type === "reload") {
