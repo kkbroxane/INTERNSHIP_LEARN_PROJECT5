@@ -1,4 +1,5 @@
 from AI_Chatbot.settings import LLAMA_GENERATION_MODEL, LLAMA_EMBEDDING_MODEL, LLAMA_GENERATION_URL, LLAMA_EMBEDDING_URL, SYSTEM_PROMPT
+from chatbot.models import ChatMessage
 import textwrap
 import requests
 import json
@@ -18,101 +19,42 @@ def extract_json_dict(text: str) -> dict:
     match = re.search(pattern, text, re.DOTALL | re.MULTILINE)
     if not match:
         raise ValueError("No JSON code block found in the input text.")
-    
     json_data = match.group(1).strip()
 
-    print("\n\n==============Hello=================\n")
-    print(json_data)
-    print("\n===============================\n\n")
-
     return json.loads(json_data)
-    
+
+def build_context(memory_size : int = 7):
+    messages = ChatMessage.objects.order_by("-timestamp")
+    latest_messages = messages.reverse()[:memory_size]
+
+    context = [{"role": "system", "content": SYSTEM_PROMPT}]
+
+    for m in latest_messages:
+        context.append({"role": "user", "content": m.user_message})
+        context.append({"role": "assistant", "content": m.bot_response})
+    return context
+
 def generate_content(message):
-    print("\n\n=========USER QUERY==============\n")
+    print("\n\n=========u_query in gen_cont==============\n")
     print(message)
     print("\n===============================\n\n")
 
+    context = build_context()
+
+    context.append({"role": "user", "content": message})
 
     payload = {
         "model": LLAMA_GENERATION_MODEL,
-        "messages": [
-            {"role": "system", "content": SYSTEM_PROMPT},
-
-            {"role": "user", "content": "Bonjour !"},
-            {"role": "assistant", "content": textwrap.dedent("""
-                ```
-                {
-                    "relevance": "non pertinent",
-                    "property_type": null,
-                    "answer": "Bonjour ! Comment puis-je vous aider dans vos recherches immobilières aujourd’hui ?"
-                }
-                ```
-                """).strip()
-            },
-
-            {"role": "user", "content": "Je cherche un hôtel à Cotonou."},
-            {"role": "assistant", "content": textwrap.dedent("""
-                ```
-                {
-                    "relevance": "pertinent",
-                    "property_type": null,
-                    "answer": "Désolé, ce type de bien n’est pas pris en charge. Je peux uniquement vous aider à trouver une maison, une villa, un appartement, une boutique, un bureau ou un terrain."
-                }
-                ```
-                """).strip()
-            },
-
-            {"role": "user", "content": "Je cherche une maison."},
-            {"role": "assistant", "content": textwrap.dedent("""
-                ```
-                {
-                    "relevance": "pertinent",
-                    "property_type": "maison",
-                    "answer": "Bien sûr ! Nous avons une maison disponible qui pourrait correspondre à votre recherche. Elle fait 250 m², est située à Cotonou, et dispose de 3 chambres et de 3 douches. Le prix demandé est de 800000 FCFA en location. Pour mieux vous accompagner, pourriez-vous me préciser vos critères principaux ? Par exemple, le nombre de chambres ou de douches souhaité, le budget etc."
-                }
-                ```
-                """).strip()
-            },
-
-            {"role": "user", "content": "Aide moi à résoudre un problème mathématique."},
-            {"role": "assistant", "content": textwrap.dedent("""
-                ```
-                {
-                    "relevance": "non pertinent",
-                    "property_type": null,
-                    "answer": "Je suis uniquement autorisé à répondre à des questions liées à l’immobilier."
-                }
-                ```
-                """).strip()
-            },
-
-            {"role": "user", "content": "J’ai une base Excel de maisons à exploiter sur un serveur Ubuntu avec Python et openpyxl."},
-            {"role": "assistant", "content": textwrap.dedent("""
-                ```
-                {
-                    "relevance": "non pertinent",
-                    "property_type": null,
-                    "answer": "Je suis uniquement autorisé à répondre à des questions liées à l’immobilier."
-                }
-                ```
-                """).strip()
-            },
-
-            {"role": "user", "content": message}
-        ],
+        "messages": context,
         "stream": False
     }
 
     print("\n\n===============================\n")
-    print("Sending payload to Ollama...")
+    print("Sending payload to model...")
     print("\n===============================\n\n")
 
     response = requests.post(LLAMA_GENERATION_URL, json=payload)
 
-    print("\n\n===============================\n")
-    print("RAW RESPONSE:")
-    print(response.text)
-    print("\n===============================\n\n")
     data = response.json()["message"]["content"]
 
     print("\n\n===============================\n")
@@ -134,76 +76,22 @@ def answer_from_db(message, properties):
     print(properties)
     print("\n===============================\n\n")
 
+    context = build_context()
+    context.append({"role": "system", "content": f"Voici les propriétés disponibles pour répondre à la demande de l'utilisateur: {properties}"})
+    context.append({"role": "user", "content": message})
 
     payload = {
         "model": LLAMA_GENERATION_MODEL,
-        "messages": [
-            {"role": "system", "content": SYSTEM_PROMPT},
-            {"role": "system", "content": f"Voici des informations utiles pour répondre à l'utilisateur: {properties}"},
-
-            {"role": "user", "content": "Je cherche un hôtel à Cotonou."},
-            {"role": "assistant", "content": textwrap.dedent("""
-                ```
-                {
-                    "relevance": "pertinent",
-                    "property_type": null,
-                    "answer": "Désolé, ce type de bien n’est pas pris en charge. Je peux uniquement vous aider à trouver une maison, une villa, un appartement, une boutique, un bureau ou un terrain."
-                }
-                ```
-                """).strip()
-            },
-
-            {"role": "user", "content": "Je cherche une maison."},
-            {"role": "assistant", "content": textwrap.dedent("""
-                ```
-                {
-                    "relevance": "pertinent",
-                    "property_type": "maison",
-                    "answer": "Bien sûr ! Nous avons une maison disponible qui pourrait correspondre à votre recherche. Elle fait 250 m², est située à Cotonou, et dispose de 3 chambres et de 3 douches. Le prix demandé est de 800000 FCFA en location. Pour mieux vous accompagner, pourriez-vous me préciser vos critères principaux ? Par exemple, le nombre de chambres ou de douches souhaité, le budget etc."
-                }
-                ```
-                """).strip()
-            },
-
-            {"role": "user", "content": "Aide moi à résoudre un problème mathématique."},
-            {"role": "assistant", "content": textwrap.dedent("""
-                ```
-                {
-                    "relevance": "non pertinent",
-                    "property_type": null,
-                    "answer": "Je suis uniquement autorisé à répondre à des questions liées à l’immobilier."
-                }
-                ```
-                """).strip()
-            },
-
-            {"role": "user", "content": "J’ai une base Excel de maisons à exploiter sur un serveur Ubuntu avec Python et openpyxl."},
-            {"role": "assistant", "content": textwrap.dedent("""
-                ```
-                {
-                    "relevance": "non pertinent",
-                    "property_type": null,
-                    "answer": "Je suis uniquement autorisé à répondre à des questions liées à l’immobilier."
-                }
-                ```
-                """).strip()
-            },
-
-            {"role": "user", "content": message}
-        ],
-        "stream": False
+        "messages": context,
+        "stream": Falsek
     }
 
     response = requests.post(LLAMA_GENERATION_URL, json=payload)
 
-    print("\n\n===========(answer_from_db)====================\n")
-    print("RAW RESPONSE:")
-    print(response.text)
-    print("\n===============================\n\n")
     data = response.json()["message"]["content"]
 
     print("\n\n===============================\n")
-    print("DATA RESPONSE:")
+    print("DATA RESPONSE in an_fr_db:")
     print(data)
     print("\n===============================\n\n")
 

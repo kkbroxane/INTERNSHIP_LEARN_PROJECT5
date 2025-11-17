@@ -2,6 +2,7 @@ from django.db import models
 from django.core.validators import MinValueValidator
 from pgvector.django import VectorField
 from chatbot.utils import embed_content
+import numpy as np
 
 TRANSACTION_TYPES = [
     ('location', 'location'),
@@ -35,6 +36,12 @@ class Property(models.Model):
         return type_info
 
     def generate_embedding_for_property(self):
-        embedding_vector = embed_content(self.type_info())
-        self.embedding = embedding_vector
+        embedding = embed_content(self.type_info())
+        
+        embedding_arr = np.array(embedding)
+        norm = np.linalg.norm(embedding_arr)
+        if not norm:
+            self.embedding = embedding_arr
+        else:
+            self.embedding = embedding_arr / norm
         self.save()

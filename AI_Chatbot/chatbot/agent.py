@@ -63,19 +63,24 @@ class Agent:
         relevance = plan.get("relevance", "non pertinent")
 
         if relevance in ("non pertinent", "error"):
-            return plan.get("answer", "Désolé, pas de réponse disponible.")
+            answer = plan.get("answer", "Désolé, pas de réponse disponible.")
+            ChatMessage.objects.create(user_message=user_message, bot_response=answer)
+            return answer
 
         try:
             property_type = plan.get("property_type")
             answer = plan.get("answer")
             if not property_type:
+                ChatMessage.objects.create(user_message=user_message, bot_response=answer)
                 return answer
 
             results = self.tools["search_properties"].run(
                 user_message, property_type, top_k=self.top_k
             )
             final = self.tools["answer_from_db"].run(user_message, results)
-            return final if isinstance(final, str) else json.dumps(final, ensure_ascii=False)
+            final_answer = final if isinstance(final, str) else json.dumps(final, ensure_ascii=False)
+            ChatMessage.objects.create(user_message=user_message, bot_response=final_answer)
+            return final_answer
 
         except Exception:
             return "Désolé, une erreur est survenue."
@@ -86,3 +91,72 @@ class Agent:
         trace.append({"action": "planning", "plan": plan})
         answer = self._execute(user_message, plan, trace)
         return {"answer": answer, "trace": trace}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+"""
+    def _build_context(self, user_message: str) -> str:
+        parts = []
+        for msg in self.memory[-self.memory_size * 2:]:
+            role = msg.get("role", "assistant")
+            content = msg.get("content", "")
+            if role == "user":
+                parts.append(f"User: {content}")
+            else:
+                parts.append(f"Assistant: {content}")
+        parts.append(f"User: {user_message}")
+        return "\n".join(parts)
+
+    def _update_memory(self, user_message: str, agent_answer: str):
+        print
+        logger.warning("Current memory (pre-update): %s", self.memory)
+        logger.warning("Updating memory with user: %s | assistant: %s", user_message, agent_answer)
+
+        self.memory.append({"role": "user", "content": user_message})
+        self.memory.append({"role": "assistant", "content": agent_answer})
+
+        max_entries = self.memory_size * 2
+        if len(self.memory) > max_entries:
+            self.memory = self.memory[-max_entries :]
+            logger.critical("Memory trimmed to %d entries", len(self.memory))
+"""

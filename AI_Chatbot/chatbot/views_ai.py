@@ -10,9 +10,8 @@ def format_results(results):
     for p in results:
         similarity = 1 - p.distance
         if similarity < SIMILARITY_THRESHOLD:
-            print("\n\n=========too low==============\n")
+            print("\n=========too low==============\n")
             print(f"{p.type_info()} -- sim: {round(similarity, 4)}")
-            print("\n===============================\n\n")
             continue
         structured_results.append({
             "id": p.id,
@@ -27,9 +26,7 @@ def format_results(results):
     return structured_results
 
 def search_properties(user_query, type, top_k=5):
-    print("\n\n=========Detected type==============\n")
-    print(type)
-    print("\n===============================\n\n")
+    print(f"\n\n====Detected type = {type}==============\n")
 
     if not type:
         return None
@@ -48,51 +45,3 @@ def search_properties(user_query, type, top_k=5):
         return None
 
     return format_results(results)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-"""
-def normalize_embedding(embedding):
-    emb = np.array(embedding)
-    norm = np.linalg.norm(emb)
-    if norm == 0:
-        return emb  # or handle zero vector edge case
-    return emb / norm
-"""
