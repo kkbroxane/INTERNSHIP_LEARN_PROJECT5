@@ -64,7 +64,7 @@
   <form method="POST" class="message-form">
     {%csrf_token%}
     <div class="input-group">
-      <input autocomplete="off" type="text" name="user_message" class="form-control message-input" placeholder="Entrez un message...">
+      <input type="text" name="user_message" class="form-control message-input" placeholder="Entrez un message...">
       <div class="input-group-append">
         <button id="sendBtn" type="submit" class="btn btn-primary btn-send">Send</button>
       </div>
@@ -75,7 +75,6 @@
 
 <script>
   const messagesList = document.querySelector('.messages-list');
-  const messagesBox = document.querySelector('.messages-box');
   const messageForm = document.querySelector('.message-form');
   const messageInput = document.querySelector('.message-input');
   const sendBtn = document.getElementById('sendBtn');
@@ -83,7 +82,6 @@
 
   function scrollToBottom() {
     messagesList.scrollTop = messagesList.scrollHeight;
-    messagesBox.scrollTop = messagesBox.scrollHeight;
   }
 
   if (nav.type === "reload") {
@@ -106,10 +104,10 @@
     li.classList.add('typing-indicator');
     li.id = "typingIndicator";
     li.innerHTML = `
-        <div class="typing-dots">
-          <span>.</span><span>.</span><span>.</span>
-        </div>
-        <span>&nbsp;Réponse en cours...</span>
+      <span>&nbsp;Réponse en cours</span>
+      <div class="typing-dots">
+        <span>.</span><span>.</span><span>.</span>
+      </div>
     `;
     messagesList.appendChild(li);
     scrollToBottom();
@@ -130,10 +128,11 @@
 
     const messageItem = document.createElement('li');
     messageItem.classList.add('message','sent');
-    messageItem.innerHTML = ` 
+    const formattedMessage = message.replace(/\n/g, '<br>');
+    messageItem.innerHTML = `
       <div class="message-text">
         <div class="message-sender"><b>Vous</b></div>
-        <div class="message-content">${message}<br></div>
+        <div class="message-content">${formattedMessage}<br></div>
       </div>
     `;
     messagesList.appendChild(messageItem);
@@ -144,7 +143,7 @@
 
     showTypingIndicator();
 
-    fetch("{% url 'send_agent' %}", {
+    fetch("{% url 'send_message' %}", {
       method: 'POST',
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
       body: new URLSearchParams({
