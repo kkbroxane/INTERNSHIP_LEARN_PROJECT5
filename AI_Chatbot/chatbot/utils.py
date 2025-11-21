@@ -24,8 +24,8 @@ def extract_json_dict(text: str) -> dict:
     return json.loads(json_data)
 
 def build_context(memory_size : int = 7):
-    messages = ChatMessage.objects.order_by("-timestamp")
-    latest_messages = messages.reverse()[:memory_size]
+    messages = ChatMessage.objects.order_by("-timestamp")[:memory_size]
+    latest_messages = list(messages)[::-1]
 
     context = [{"role": "system", "content": SYSTEM_PROMPT}]
 
@@ -83,7 +83,7 @@ def answer_from_db(message, properties):
     payload = {
         "model": LLAMA_GENERATION_MODEL,
         "messages": context,
-        "stream": Falsek
+        "stream": False
     }
 
     response = requests.post(LLAMA_GENERATION_URL, json=payload)

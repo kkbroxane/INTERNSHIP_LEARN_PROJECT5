@@ -159,10 +159,11 @@
 
         const messageItem = document.createElement('li');
         messageItem.classList.add('message', 'received');
+        const formattedResponse = response.replace(/\n/g, '<br>');
         messageItem.innerHTML = `
           <div class="message-text">
               <div class="message-sender"><b>Chatbot</b></div>
-              <div class="message-content">${response}<br></div>
+              <div class="message-content">${formattedResponse}<br></div>
           </div>
         `;
         messagesList.appendChild(messageItem);
