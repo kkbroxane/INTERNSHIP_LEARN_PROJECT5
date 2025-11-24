@@ -26,7 +26,7 @@ def format_results(results):
     return structured_results
 
 def search_properties(user_query, type, top_k=5):
-    print(f"\n\n====Detected type = {type}==============\n")
+    print(f"\n\n======== Detected type = {type} ========\n")
 
     if not type:
         return None
